@@ -53,12 +53,12 @@ pipeline {
                     docker.build("mannanrawat/login-service:latest")
 
                     echo "Building Jenkins Service Docker Image"
-                    docker.build("mjenkins/jenkins:lts")
+                    docker.build("jenkins/jenkins:lts")
 
                     echo "Building Kubernetes Service Docker Image"
-                    docker.build("mmannanrawat/kubernetes-details:latest")
+                    docker.build("mannanrawat/kubernetes-details:latest")
 
-                    echo "Building Minikube ControllerDocker Image"
+                    echo "Building Minikube Controller Docker Image"
                     docker.build("mannanrawat/minikube-controller:latest")
                 }
             }
@@ -67,37 +67,21 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // // Login to Docker Hub
-                     sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
-                     sh "docker build -t ${DOCKER_IMAGE} ."
-
-                    // // Push the image
-                    // // docker.image("${DOCKER_IMAGE}:${env.BUILD_ID}").push()
-                    // // docker.image("${DOCKER_IMAGE}:${env.BUILD_ID}").push('latest')
-
-                    // // Push the image with the build ID tag
-                    // docker.image(DOCKER_IMAGE).push()
-
-                    // // Push the image with the 'latest' tag
-                    // docker.image("mannanrawat/devops-automation:latest").push()
+                     // Login to Docker Hub
+                    sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
                     
-                    // // Login to Docker Hub
-                    // sh "echo ${DOCKERHUB_PASSWORD} | ${dockerHome}/docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
-
-                    // // Push the image
-                    // sh "${dockerHome}/docker push ${DOCKER_IMAGE}"
-                    // sh "${dockerHome}/docker tag ${DOCKER_IMAGE} mannanrawat/devops-automation:latest"
-                    // sh "${dockerHome}/docker push mannanrawat/devops-automation:latest"
-
-
-
-                    // Push the image with build ID tag
-                    sh "docker push ${DOCKER_IMAGE}"
-
-                    // // Optionally tag and push as 'latest'
-                    // sh "docker tag ${DOCKER_IMAGE} mananrawat/devops-automation:latest"
-                    // sh "docker push mananrawat/devops-automation:latest"
+                    // Push all Docker images in this stage
+                    echo "Pushing Login Service Docker Image"
+                    sh "docker push mannanrawat/login-service:latest"
                     
+                    echo "Pushing Jenkins Service Docker Image"
+                    sh "docker push jenkins/jenkins:lts"
+
+                    echo "Pushing Kubernetes Service Docker Image"
+                    sh "docker push mannanrawat/kubernetes-details:latest"
+
+                    echo "Pushing Minikube Controller Service Docker Image"
+                    sh "docker push mannanrawat/minikube-controller:latest"
                 }
             }
         }
