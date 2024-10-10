@@ -48,14 +48,18 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    //docker.build("${DOCKER_IMAGE}:${env.BUILD_ID}")
-                    sh 'docker --version'
-                    docker.build(DOCKER_IMAGE)
-                    // def dockerHome = tool name: "${env.dockerTool}"
-                    // sh "${dockerHome}/docker build -t ${DOCKER_IMAGE} ."
+                    // Build all Docker images in this stage with direct image paths
+                    echo "Building Login Service Docker Image"
+                    docker.build("mannanrawat/login-service:latest")
 
-                    //Build Docker image
-                    //sh "docker build -t ${DOCKER_IMAGE} ."
+                    echo "Building Jenkins Service Docker Image"
+                    docker.build("mjenkins/jenkins:lts")
+
+                    echo "Building Kubernetes Service Docker Image"
+                    docker.build("mmannanrawat/kubernetes-details:latest")
+
+                    echo "Building Minikube ControllerDocker Image"
+                    docker.build("mannanrawat/minikube-controller:latest")
                 }
             }
         }
