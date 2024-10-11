@@ -19,6 +19,9 @@ pipeline {
 
         MINIKUBE_BIN = '/opt/homebrew/bin/minikube'
         KUBECONFIG_FILE = 'kubeconfig'
+
+
+        MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
     }
 
     tools {
@@ -32,6 +35,16 @@ pipeline {
                 checkout scm
             }
         }
+
+         stages {
+        stage('Connect to Kubernetes') {
+            steps {
+                script {
+                    sh "kubectl config set-credentials jenkins --token=${MINIKUBE_TOKEN}"
+                }
+            }
+        }
+    }
 
 
     stage('Setup') {
