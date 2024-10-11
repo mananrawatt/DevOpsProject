@@ -53,7 +53,7 @@ pipeline {
                     docker.build("mannanrawat/login-service:latest")
 
                     echo "Building Jenkins Service Docker Image"
-                    docker.build("jenkins/jenkins:lts")
+                    docker.build("mannanrawat/jenkins-service:lts")
 
                     echo "Building Kubernetes Service Docker Image"
                     docker.build("mannanrawat/kubernetes-details:latest")
