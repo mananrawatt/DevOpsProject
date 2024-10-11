@@ -36,8 +36,22 @@ pipeline {
             }
         }
 
-         
-        stage('Connect to Kubernetes') {
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Set the Kubernetes context if necessary
+                    sh 'kubectl config use-context minikube'
+
+                    // Change to the Deployment directory
+                    dir('Deployment') {
+                        // Apply all deployment files in the directory
+                        sh 'kubectl apply -f . --namespace=main'
+                    }
+                }
+            }
+        }
+        
+        stage('Connect to Minikube') {
             steps {
                 script {
                     sh "kubectl config set-credentials mini-jen --token=${MINIKUBE_TOKEN}"
