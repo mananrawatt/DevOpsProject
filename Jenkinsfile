@@ -75,7 +75,7 @@ pipeline {
                     sh "docker push mannanrawat/login-service:latest"
                     
                     echo "Pushing Jenkins Service Docker Image"
-                    sh "docker push jenkins/jenkins:lts"
+                    sh "docker push mannanrawat/jenkins-service:lts"
 
                     echo "Pushing Kubernetes Service Docker Image"
                     sh "docker push mannanrawat/kubernetes-details:latest"
