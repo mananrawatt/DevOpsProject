@@ -52,7 +52,7 @@ pipeline {
                             // If the file does not exist, copy it from the specified local directory
                             echo 'File jenkins.yaml not found. Copying from local directory...'
                             sh '''
-                                cp /Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment/* ./
+                                cp "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/*" ./
                             '''
                         }
 
