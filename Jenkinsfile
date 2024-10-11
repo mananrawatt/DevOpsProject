@@ -41,22 +41,59 @@ pipeline {
             steps {
                 script {
                     sh "kubectl config set-credentials mini-jen --token=${MINIKUBE_TOKEN}"
+                    echo "------------------------------------------"
+                    echo "Connectivity Succesfully Achieved!!"
+                    echo "------------------------------------------"
                 }
             }
         }
+
+        stage('Cluster Details'){
+            steps{
+                script{
+                    sh '''
+                        echo "------------------------------------------"
+                        minikube ip
+                        echo "------------------------------------------"
+                        kubectl cluster-info
+                        echo "------------------------------------------"
+                    '''
+                }
+            }
+        }
+
+        stage('Status of Nodes & Pods'){
+            steps{
+                script{
+                    sh '''
+                    echo "------------------------------------------"
+                    echo "------------------------------------------"
+                        kubectl get no
+                        echo "------------------------------------------"
+                        kubectl get ns
+                        echo "------------------------------------------"
+                        kubectl get po
+                        echo "------------------------------------------"
+                        kubectl get deploy
+                        echo "------------------------------------------"
+                        echo "------------------------------------------"
+                    '''
+                }
+            }
+        }
+        
     
 
-
-    stage('Setup') {
-            steps {
-                sh "chmod +x ${MINIKUBE_BIN}"
-                sh "${MINIKUBE_BIN} start --driver=docker"
-                sh "${MINIKUBE_BIN} kubectl config use-context minikube"
-                script {
-                    env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}" // Assuming kubeconfig is in the workspace
+        stage('Setup') {
+                steps {
+                    sh "chmod +x ${MINIKUBE_BIN}"
+                    sh "${MINIKUBE_BIN} start --driver=docker"
+                    sh "${MINIKUBE_BIN} kubectl config use-context minikube"
+                    script {
+                        env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}" // Assuming kubeconfig is in the workspace
+                    }
                 }
             }
-        }
 
         stage('Build Docker Image') {
             steps {
