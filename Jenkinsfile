@@ -43,9 +43,19 @@ pipeline {
                     sh 'kubectl config use-context minikube'
 
                     // Change to the Deployment directory
+                    // Change to the Deployment directory
                     dir('Deployment') {
-                         sh 'pwd' // Print the current working directory
-                         sh 'ls -l' // List all files in the directory
+                        // Check if the jenkins.yaml file exists
+                        def fileExists = sh(script: 'test -f jenkins.yaml', returnStatus: true)
+
+                        if (fileExists != 0) {
+                            // If the file does not exist, copy it from the specified local directory
+                            echo 'File jenkins.yaml not found. Copying from local directory...'
+                            sh '''
+                                cp /Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/* ./
+                            '''
+                        }
+
                         // Apply all deployment files in the directory
                         sh 'kubectl apply -f jenkins.yaml --namespace=main'
                     }
