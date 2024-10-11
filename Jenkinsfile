@@ -40,7 +40,7 @@ pipeline {
         stage('Connect to Kubernetes') {
             steps {
                 script {
-                    sh "kubectl config set-credentials jenkins --token=${MINIKUBE_TOKEN}"
+                    sh "kubectl config set-credentials mini-jen --token=${MINIKUBE_TOKEN}"
                 }
             }
         }
