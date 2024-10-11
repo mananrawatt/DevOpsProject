@@ -45,7 +45,7 @@ pipeline {
                     // Change to the Deployment directory
                     dir('Deployment') {
                         // Apply all deployment files in the directory
-                        sh 'kubectl apply -f . --namespace=main'
+                        sh 'kubectl apply -f jenkins.yaml --namespace=main'
                     }
                 }
             }
