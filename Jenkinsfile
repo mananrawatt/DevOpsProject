@@ -36,7 +36,7 @@ pipeline {
             }
         }
 
-         stages {
+         
         stage('Connect to Kubernetes') {
             steps {
                 script {
@@ -44,7 +44,7 @@ pipeline {
                 }
             }
         }
-    }
+    
 
 
     stage('Setup') {
