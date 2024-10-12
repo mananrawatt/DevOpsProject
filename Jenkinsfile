@@ -60,7 +60,7 @@ pipeline {
                         // }
 
                         sh """
-                            kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
+                            kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
                         """
                     }
                 }
