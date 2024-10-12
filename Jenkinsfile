@@ -24,7 +24,7 @@ pipeline {
         MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
 
         //    Deployment path where deployment files are kept
-        DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"
+        //DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"
     }
 
     tools {
@@ -60,7 +60,7 @@ pipeline {
                         // }
 
                         sh """
-                            kubectl apply -f ${DEPLOYMENT_PATH}/jenkins.yaml --namespace=main
+                            kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
                         """
                     }
                 }
