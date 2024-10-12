@@ -20,8 +20,11 @@ pipeline {
         MINIKUBE_BIN = '/opt/homebrew/bin/minikube'
         KUBECONFIG_FILE = 'kubeconfig'
 
-
+        //Minikube token to maintain connectivity
         MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
+
+        //    Deployment path where deployment files are kept
+        DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"
     }
 
     tools {
@@ -46,18 +49,19 @@ pipeline {
                     // Change to the Deployment directory
                     dir('Deployment') {
                         // Check if the jenkins.yaml file exists
-                        def fileExists = sh(script: 'test -f jenkins.yaml', returnStatus: true)
+                        // def fileExists = sh(script: 'test -f jenkins.yaml', returnStatus: true)
 
-                        if (fileExists != 0) {
-                            // If the file does not exist, copy it from the specified local directory
-                            echo 'File jenkins.yaml not found. Copying from local directory...'
-                            sh '''
-                                cp "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/*"  /Users/mananrawat/.jenkins/workspace/DevOpsPythonProject/Deployment/
-                            '''
-                        }
+                        // if (fileExists != 0) {
+                        //     // If the file does not exist, copy it from the specified local directory
+                        //     echo 'File jenkins.yaml not found. Copying from local directory...'
+                        //     sh '''
+                        //         cp "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/*"  /Users/mananrawat/.jenkins/workspace/DevOpsPythonProject/Deployment/
+                        //     '''
+                        // }
 
-                        // Apply all deployment files in the directory
-                        sh 'kubectl apply -f jenkins.yaml --namespace=main'
+                        sh """
+                            kubectl apply -f ${DEPLOYMENT_PATH}/jenkins.yaml --namespace=main
+                        """
                     }
                 }
             }
