@@ -39,33 +39,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    // Set the Kubernetes context if necessary
-                    sh 'kubectl config use-context minikube'
-
-                    // Change to the Deployment directory
-                    // Change to the Deployment directory
-                    dir('Deployment') {
-                        // Check if the jenkins.yaml file exists
-                        // def fileExists = sh(script: 'test -f jenkins.yaml', returnStatus: true)
-
-                        // if (fileExists != 0) {
-                        //     // If the file does not exist, copy it from the specified local directory
-                        //     echo 'File jenkins.yaml not found. Copying from local directory...'
-                        //     sh '''
-                        //         cp "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/*"  /Users/mananrawat/.jenkins/workspace/DevOpsPythonProject/Deployment/
-                        //     '''
-                        // }
-
-                        sh """
-                            kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
-                        """
-                    }
-                }
-            }
-        }
+        
         
         stage('Connect to Minikube') {
             steps {
@@ -166,100 +140,28 @@ pipeline {
             }
         }
 
-        // stage('Test Connectivity to Minikube') {
-        //     steps {
-        //         script {
-        //             env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}"
-        //             withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
-        //                 try {
-        //                     sh "kubectl cluster-info"
-        //                     sh "kubectl get nodes"
-        //                 } catch (Exception e) {
-        //                     echo "Error accessing Minikube: ${e.message}"
-        //                     currentBuild.result = 'FAILURE'
-        //                     error("Failed to connect to Minikube")
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Deploy to Kubernetes') {
-        //     steps {
-        //         script {
-        //             kubernetesDeploy(
-        //             configs: 'k8s/deployment.yaml',
-        //             kubeconfigId: 'kubeconfig'
         
-        // stage('Deploy to Minikube') {
-        //     steps {
-        //         script {
-        //             withKubeConfig([credentialsId: 'MINIKUBE_KUBECONFIG_CREDENTIALS']) {
-        //                 sh 'kubectl apply -f k8s/deployment.yaml'
-
-        // stage('Deploy to Kubernetes') {
-        //     steps {
-        //         withKubeConfig([credentialsId: env.KUBECONFIG_CREDENTIAL_ID, serverUrl: 'https://127.0.0.1:52582']) {
-        //             sh 'kubectl apply -f k8s/deployment.yaml'
-                    
-        //         }
-        //     }
-        // }
-
-        
-        // stage('Deploy to Minikube') {
-        //     steps {
-        //         script {
-        //             withKubeConfig([credentialsId: 'minikube-kubeconfig']) {
-        //                 try {
-        //                     sh "kubectl apply -f k8s/deployment.yaml --validate=false"
-        //                     sh "kubectl apply -f k8s/service.yaml --validate=false"
-        //                 } catch (Exception e) {
-        //                     echo "Error deploying: ${e.message}"
-        //                     currentBuild.result = 'FAILURE'
-        //                     error("Deployment failed")
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Deploy to Minikube') {
-        //     steps {
-        //         script {
-        //             env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}"
-        //             withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
-        //                 try {
-        //                     sh "kubectl apply -f k8s/deployment.yaml --validate=false"
-        //                     sh "kubectl apply -f k8s/service.yaml --validate=false"
-        //                 } catch (Exception e) {
-        //                     echo "Error deploying: ${e.message}"
-        //                     currentBuild.result = 'FAILURE'
-        //                     error("Deployment failed")
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
 
         stage('Manual Approval for Deployment') {
             steps {
                 input message: 'Do you want to deploy manually? Click Proceed to continue.', ok: 'Proceed'
             }
         }
-
-        stage('Manual Deployment') {
+    
+        stage('Deployment') {
             steps {
                 script {
-                    echo "Deploy the application manually at this point."
-                    echo "This can include any manual steps like copying files, running deployment scripts, etc."
-                    // Add instructions or shell commands here for manual deployment if necessary
-                    echo "Once manual deployment is done, you can continue."
+                    // Set the Kubernetes context if necessary
+                    sh 'kubectl config use-context minikube'
+                    echo "------------------STARTING DEPLOYMENT-------------------"
+                        sh """
+                            kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
+                        """
+
+                    echo "------------------DEPLOYMENT SUCCESSFUL-------------------"
                 }
             }
         }
-    
-    
 
 
         stage('Run Backup Script') {
