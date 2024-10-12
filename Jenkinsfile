@@ -24,7 +24,7 @@ pipeline {
         MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
 
         //    Deployment path where deployment files are kept
-        DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"
+        DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"
     }
 
     tools {
