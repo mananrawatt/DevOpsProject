@@ -151,6 +151,13 @@ pipeline {
         stage('Deployment') {
             steps {
                 script {
+                    echo "Current Working Directory: ${env.WORKSPACE}"
+                    echo "KUBECONFIG: ${env.KUBECONFIG}"
+                
+                    // Check if the YAML file exists
+                    sh "ls -l /Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
+            
+            
                     // Set the Kubernetes context if necessary
                     sh 'kubectl config use-context minikube'
                     echo "------------------STARTING DEPLOYMENT-------------------"
