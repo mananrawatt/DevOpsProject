@@ -155,7 +155,9 @@ pipeline {
                     echo "KUBECONFIG: ${env.KUBECONFIG}"
                 
                     // Check if the YAML file exists
-                    sh "ls -l /Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
+                    sh '''
+                        ls -l "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
+                    '''
             
             
                     // Set the Kubernetes context if necessary
