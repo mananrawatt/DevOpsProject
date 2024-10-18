@@ -19,6 +19,12 @@ pipeline {
 
         MINIKUBE_BIN = '/opt/homebrew/bin/minikube'
         KUBECONFIG_FILE = 'kubeconfig'
+
+        //Minikube token to maintain connectivity
+        MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
+
+        //    Deployment path where deployment files are kept
+        //DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"
     }
 
     tools {
@@ -33,29 +39,81 @@ pipeline {
             }
         }
 
-
-    stage('Setup') {
+        
+        
+        stage('Connect to Minikube') {
             steps {
-                sh "chmod +x ${MINIKUBE_BIN}"
-                sh "${MINIKUBE_BIN} start --driver=docker"
-                sh "${MINIKUBE_BIN} kubectl config use-context minikube"
                 script {
-                    env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}" // Assuming kubeconfig is in the workspace
+                    sh "kubectl config set-credentials mini-jen --token=${MINIKUBE_TOKEN}"
+                    echo "------------------------------------------"
+                    echo "Connectivity Succesfully Achieved!!"
+                    echo "------------------------------------------"
                 }
             }
         }
 
+        stage('Cluster Details'){
+            steps{
+                script{
+                    sh '''
+                        echo "------------------------------------------"
+                        
+                        echo "------------------------------------------"
+                        kubectl cluster-info
+                        echo "------------------------------------------"
+                    '''
+                }
+            }
+        }
+
+        stage('Status of Nodes & Pods'){
+            steps{
+                script{
+                    sh '''
+                    echo "------------------------------------------"
+                    echo "------------------------------------------"
+                        kubectl get no
+                        echo "------------------------------------------"
+                        kubectl get ns
+                        echo "------------------------------------------"
+                        kubectl get po
+                        echo "------------------------------------------"
+                        kubectl get deploy
+                        echo "------------------------------------------"
+                        echo "------------------------------------------"
+                    '''
+                }
+            }
+        }
+        
+    
+
+        stage('Setup') {
+                steps {
+                    sh "chmod +x ${MINIKUBE_BIN}"
+                    sh "${MINIKUBE_BIN} start --driver=docker"
+                    sh "${MINIKUBE_BIN} kubectl config use-context minikube"
+                    script {
+                        env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}" // Assuming kubeconfig is in the workspace
+                    }
+                }
+            }
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    //docker.build("${DOCKER_IMAGE}:${env.BUILD_ID}")
-                    sh 'docker --version'
-                    docker.build(DOCKER_IMAGE)
-                    // def dockerHome = tool name: "${env.dockerTool}"
-                    // sh "${dockerHome}/docker build -t ${DOCKER_IMAGE} ."
+                    // Build all Docker images in this stage with direct image paths
+                    echo "Building Login Service Docker Image"
+                    docker.build("mannanrawat/login-service:latest")
 
-                    //Build Docker image
-                    //sh "docker build -t ${DOCKER_IMAGE} ."
+                    echo "Building Jenkins Service Docker Image"
+                    docker.build("mannanrawat/jenkins-service:lts")
+
+                    echo "Building Kubernetes Service Docker Image"
+                    docker.build("mannanrawat/kubernetes-details:latest")
+
+                    echo "Building Minikube Controller Docker Image"
+                    docker.build("mannanrawat/minikube-controller:latest")
                 }
             }
         }
@@ -63,118 +121,56 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // // Login to Docker Hub
-                     sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
-                     sh "docker build -t ${DOCKER_IMAGE} ."
-
-                    // // Push the image
-                    // // docker.image("${DOCKER_IMAGE}:${env.BUILD_ID}").push()
-                    // // docker.image("${DOCKER_IMAGE}:${env.BUILD_ID}").push('latest')
-
-                    // // Push the image with the build ID tag
-                    // docker.image(DOCKER_IMAGE).push()
-
-                    // // Push the image with the 'latest' tag
-                    // docker.image("mannanrawat/devops-automation:latest").push()
+                     // Login to Docker Hub
+                    sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
                     
-                    // // Login to Docker Hub
-                    // sh "echo ${DOCKERHUB_PASSWORD} | ${dockerHome}/docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
-
-                    // // Push the image
-                    // sh "${dockerHome}/docker push ${DOCKER_IMAGE}"
-                    // sh "${dockerHome}/docker tag ${DOCKER_IMAGE} mannanrawat/devops-automation:latest"
-                    // sh "${dockerHome}/docker push mannanrawat/devops-automation:latest"
-
-
-
-                    // Push the image with build ID tag
-                    sh "docker push ${DOCKER_IMAGE}"
-
-                    // // Optionally tag and push as 'latest'
-                    // sh "docker tag ${DOCKER_IMAGE} mananrawat/devops-automation:latest"
-                    // sh "docker push mananrawat/devops-automation:latest"
+                    // Push all Docker images in this stage
+                    echo "Pushing Login Service Docker Image"
+                    sh "docker push mannanrawat/login-service:latest"
                     
+                    echo "Pushing Jenkins Service Docker Image"
+                    sh "docker push mannanrawat/jenkins-service:lts"
+
+                    echo "Pushing Kubernetes Service Docker Image"
+                    sh "docker push mannanrawat/kubernetes-details:latest"
+
+                    echo "Pushing Minikube Controller Service Docker Image"
+                    sh "docker push mannanrawat/minikube-controller:latest"
                 }
             }
         }
 
-        stage('Test Connectivity to Minikube') {
-            steps {
-                script {
-                    env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}"
-                    withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
-                        try {
-                            sh "kubectl cluster-info"
-                            sh "kubectl get nodes"
-                        } catch (Exception e) {
-                            echo "Error accessing Minikube: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                            error("Failed to connect to Minikube")
-                        }
-                    }
-                }
-            }
-        }
-
-        // stage('Deploy to Kubernetes') {
-        //     steps {
-        //         script {
-        //             kubernetesDeploy(
-        //             configs: 'k8s/deployment.yaml',
-        //             kubeconfigId: 'kubeconfig'
         
-        // stage('Deploy to Minikube') {
-        //     steps {
-        //         script {
-        //             withKubeConfig([credentialsId: 'MINIKUBE_KUBECONFIG_CREDENTIALS']) {
-        //                 sh 'kubectl apply -f k8s/deployment.yaml'
 
-        // stage('Deploy to Kubernetes') {
-        //     steps {
-        //         withKubeConfig([credentialsId: env.KUBECONFIG_CREDENTIAL_ID, serverUrl: 'https://127.0.0.1:52582']) {
-        //             sh 'kubectl apply -f k8s/deployment.yaml'
-                    
-        //         }
-        //     }
-        // }
-
-        
-        // stage('Deploy to Minikube') {
-        //     steps {
-        //         script {
-        //             withKubeConfig([credentialsId: 'minikube-kubeconfig']) {
-        //                 try {
-        //                     sh "kubectl apply -f k8s/deployment.yaml --validate=false"
-        //                     sh "kubectl apply -f k8s/service.yaml --validate=false"
-        //                 } catch (Exception e) {
-        //                     echo "Error deploying: ${e.message}"
-        //                     currentBuild.result = 'FAILURE'
-        //                     error("Deployment failed")
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        stage('Deploy to Minikube') {
+        stage('Manual Approval for Deployment') {
             steps {
-                script {
-                    env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}"
-                    withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
-                        try {
-                            sh "kubectl apply -f k8s/deployment.yaml --validate=false"
-                            sh "kubectl apply -f k8s/service.yaml --validate=false"
-                        } catch (Exception e) {
-                            echo "Error deploying: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                            error("Deployment failed")
-                        }
-                    }
-                }
+                input message: 'Do you want to deploy manually? Click Proceed to continue.', ok: 'Proceed'
             }
         }
     
-    
+        stage('Deployment') {
+            steps {
+                script {
+                    echo "Current Working Directory: ${env.WORKSPACE}"
+                    echo "KUBECONFIG: ${env.KUBECONFIG}"
+                
+                    // Check if the YAML file exists
+                    sh '''
+                        ls -l "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
+                    '''
+            
+            
+                    // Set the Kubernetes context if necessary
+                    sh 'kubectl config use-context minikube'
+                    echo "------------------STARTING DEPLOYMENT-------------------"
+                        sh """
+                            kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
+                        """
+
+                    echo "------------------DEPLOYMENT SUCCESSFUL-------------------"
+                }
+            }
+        }
 
 
         stage('Run Backup Script') {
