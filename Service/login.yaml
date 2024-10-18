@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: login-service
+  namespace: main     # Specify the namespace here
+spec:
+  selector:
+    app: login-service
+  ports:
+  - protocol: TCP
+    port: 5000        # Port exposed externally
+    targetPort: 5000  # Port the login service listens on
+  type: NodePort      # Exposes it via a NodePort

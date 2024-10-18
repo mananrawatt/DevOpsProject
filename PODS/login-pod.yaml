@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: login-service
+  namespace: main     # Specify the namespace here
+spec:
+  containers:
+  - name: login-service
+    image: python:3.9-slim
+    command: ["python"]
+    args: ["/mnt/app/login_service.py"]  # Path to your login service script
+    ports:
+    - containerPort: 5000
+    volumeMounts:
+    - name: app-code
+      mountPath: /mnt/app
+  volumes:
+  - name: app-code
+    hostPath:
+      path: /Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject  # Path on your local machine
+      type: Directory

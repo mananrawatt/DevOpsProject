@@ -1,0 +1,27 @@
+apiVersion: apps/v1            # The API version for Kubernetes resources (in this case, 'apps/v1' for a deployment)
+kind: Deployment               # Specifies that this is a Deployment resource
+metadata:
+  name: jenkins            # The name of the deployment (called 'devops-app')
+
+spec:
+  replicas: 2                  # The number of pod replicas to run (2 pods in this case)
+  selector:
+    matchLabels:
+      app: jenkins          # Selector to identify the pods that belong to this deployment (based on the label 'app: devops-app')
+  template:
+    metadata:
+      labels:
+        app: jenkins        # Labels for the pods created by this deployment (also 'app: devops-app')
+
+    spec:
+      containers:
+      - name: jenkins       # The name of the container in the pod
+        image: mannanrawat/jenkins-service:lts # The container image to use (Jenkins LTS version in this case)
+
+        # Commented out lines for alternative images:
+        # image: mannanrawat/devops-automation:latest  (Custom image reference, currently commented out)
+        # image: mannanrawat/devops-automation:${SANITIZED_BUILD_ID}  (Build ID-based image version, also commented out)
+
+        ports:
+        - containerPort: 8080  # The container exposes port 8080 (used by Jenkins)
+

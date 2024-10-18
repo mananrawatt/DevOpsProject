@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login-service
+  namespace: main  # Specify the main namespace here
+spec:
+  replicas: 2  # Number of pods
+  selector:
+    matchLabels:
+      app: login-service
+  template:
+    metadata:
+      labels:
+        app: login-service
+    spec:
+      containers:
+      - name: login-service
+        image: mannanrawat/login-service:latest  # The image you built
+        ports:
+        - containerPort: 8501  # The port your application runs on
+        env:
+          - name: STREAMLIT_SERVER_PORT  # Set the port environment variable
+            value: "8501"  # Match this with the port your application runs on
+        tty: true  # Allocate a pseudo-TTY
+        stdin: true  # Keep the standard input open for the container
+

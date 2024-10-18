@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minikube-controller
+  labels:
+    app: minikube-controller
+spec:
+  replicas: 3  # Change this number to the desired number of replicas
+  selector:
+    matchLabels:
+      app: minikube-controller
+  template:
+    metadata:
+      labels:
+        app: minikube-controller
+    spec:
+      containers:
+      - name: minikube-controller
+        image: mannanrawat/minikube-controller:latest
+        ports:
+        - containerPort: 8501
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: dockersock
+      volumes:
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+
