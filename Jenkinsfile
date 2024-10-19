@@ -57,7 +57,7 @@ pipeline {
                 script{
                     sh '''
                         echo "------------------------------------------"
-                        
+                        kubectl version
                         echo "------------------------------------------"
                         kubectl cluster-info
                         echo "------------------------------------------"
@@ -140,7 +140,26 @@ pipeline {
             }
         }
 
-        
+        stage('SonarQube Analysis') {
+    steps {
+        script {
+            // Use the credentials binding to retrieve the token
+            withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) {
+                env.SONAR_SCANNER_HOME = '/opt/homebrew/Cellar/sonar-scanner/6.2.1.4610/libexec'
+                env.PATH = "${env.PATH}:${SONAR_SCANNER_HOME}/bin"
+
+                // Set your SonarQube project key
+                def sonarProjectKey = 'DevOpsPythonProject' // Replace with your actual project key
+                def sonarHostUrl = 'http://localhost:9000' // Replace with your SonarQube server URL
+
+                // Execute the sonar-scanner command
+                sh "sonar-scanner -Dsonar.projectKey=${sonarProjectKey} -Dsonar.host.url=${sonarHostUrl} -Dsonar.login=${SONAR_TOKEN}"
+            }
+        }
+    }
+}
+
+
 
         stage('Manual Approval for Deployment') {
             steps {
