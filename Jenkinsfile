@@ -52,19 +52,19 @@ pipeline {
             }
         }
 
-        stage('Cluster Details'){
-            steps{
-                script{
-                    sh '''
-                        echo "------------------------------------------"
-                        kubectl version
-                        echo "------------------------------------------"
-                        kubectl cluster-info
-                        echo "------------------------------------------"
-                    '''
-                }
-            }
-        }
+        // stage('Cluster Details'){
+        //     steps{
+        //         script{
+        //             sh '''
+        //                 echo "------------------------------------------"
+        //                 kubectl version
+        //                 echo "------------------------------------------"
+        //                 kubectl cluster-info
+        //                 echo "------------------------------------------"
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Status of Nodes & Pods'){
             steps{
