@@ -23,7 +23,8 @@ pipeline {
         //Minikube token to maintain connectivity
         MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
 
-        SONAR_TOKEN = credentials('sonar-token')
+        //SONAR-QUBE
+        SONAR_TOKEN = credentials('SonarQubeToken')
         PATH = "$PATH:/opt/homebrew/opt/sonar-scanner/bin"
     }
 
