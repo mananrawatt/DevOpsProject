@@ -141,7 +141,7 @@ pipeline {
             }
         }
 
-        stages {
+        
         stage('SonarQube Analysis') {
             steps {
                 script {
@@ -156,7 +156,7 @@ pipeline {
                 }
             }
         }
-    }
+  
 
 
 
