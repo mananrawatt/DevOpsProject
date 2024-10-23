@@ -23,8 +23,8 @@ pipeline {
         //Minikube token to maintain connectivity
         MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
 
-        //    Deployment path where deployment files are kept
-        //DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"
+        SONAR_TOKEN = credentials('sonar-token')
+        PATH = "$PATH:/opt/homebrew/opt/sonar-scanner/bin"
     }
 
     tools {
@@ -140,24 +140,22 @@ pipeline {
             }
         }
 
+        stages {
         stage('SonarQube Analysis') {
-    steps {
-        script {
-            // Use the credentials binding to retrieve the token
-            withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) {
-                env.SONAR_SCANNER_HOME = '/opt/homebrew/Cellar/sonar-scanner/6.2.1.4610/libexec'
-                env.PATH = "${env.PATH}:${SONAR_SCANNER_HOME}/bin"
-
-                // Set your SonarQube project key
-                def sonarProjectKey = 'DevOpsPythonProject' // Replace with your actual project key
-                def sonarHostUrl = 'http://localhost:9000' // Replace with your SonarQube server URL
-
-                // Execute the sonar-scanner command
-                sh "sonar-scanner -Dsonar.projectKey=${sonarProjectKey} -Dsonar.host.url=${sonarHostUrl} -Dsonar.login=${SONAR_TOKEN}"
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQubeServer') {
+                        sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=DevOpsPythonProject \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=${SONAR_TOKEN}
+                        """
+                    }
+                }
             }
         }
     }
-}
 
 
 
