@@ -58,7 +58,7 @@ pipeline {
         stage('SonarQube Analysis') {
     steps {
         script {
-            withSonarQubeEnv('SonarQubeServer') {
+            withSonarQubeEnv('SonarQubeScanner') {
                 // Add SonarQube Scanner path to the PATH environment variable
                 sh """
                 export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
