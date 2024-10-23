@@ -41,7 +41,20 @@ pipeline {
             }
         }
 
-        
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQubeServer') {
+                        sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=DevOpsPythonProject \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=${SONAR_TOKEN}
+                        """
+                    }
+                }
+            }
+        }
         
         stage('Connect to Minikube') {
             steps {
@@ -143,20 +156,20 @@ pipeline {
         }
 
         
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQubeServer') {
-                        sh """
-                        sonar-scanner \
-                        -Dsonar.projectKey=DevOpsPythonProject \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=${SONAR_TOKEN}
-                        """
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             withSonarQubeEnv('SonarQubeServer') {
+        //                 sh """
+        //                 sonar-scanner \
+        //                 -Dsonar.projectKey=DevOpsPythonProject \
+        //                 -Dsonar.host.url=http://localhost:9000 \
+        //                 -Dsonar.login=${SONAR_TOKEN}
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
   
 
 
