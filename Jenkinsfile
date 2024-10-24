@@ -2,6 +2,9 @@ pipeline {
     agent any
 
     environment {
+
+        JAVA_HOME = '/usr/libexec/java_home -v 17' 
+        
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
         // PATH = "${DOCKER_HOME}:${env.PATH}"
          PATH = "${DOCKER_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
