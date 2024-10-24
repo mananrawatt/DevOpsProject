@@ -83,7 +83,9 @@ pipeline {
             withSonarQubeEnv('SonarQube') {
                
                     sh """
-                   
+                    env.JAVA_HOME = "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+                    env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+                        
                     export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
                     sonar-scanner --version
                     sonar-scanner \
