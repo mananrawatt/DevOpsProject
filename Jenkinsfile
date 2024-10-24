@@ -3,7 +3,9 @@ pipeline {
 
     environment {
 
-        JAVA_HOME = '/usr/libexec/java_home -v 17' 
+        JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+
         
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
         // PATH = "${DOCKER_HOME}:${env.PATH}"
@@ -59,15 +61,7 @@ pipeline {
         //     }
         // }
 
-        stage('Set Java Home') {
-            steps {
-                script {
-                    // Set JAVA_HOME directly to the path of Java 17
-                    env.JAVA_HOME = "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
-                    env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}" // Update the PATH variable
-                }
-            }
-        }
+        
         stage('Check Java Version') {
             steps {
                 sh 'java -version' // Check the Java version
