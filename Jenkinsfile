@@ -59,7 +59,7 @@ pipeline {
         //     }
         // }
 
-        tage('Set Java Home') {
+        stage('Set Java Home') {
             steps {
                 script {
                     // Set JAVA_HOME directly to the path of Java 17
