@@ -58,13 +58,32 @@ pipeline {
         //         }
         //     }
         // }
+
+        tage('Set Java Home') {
+            steps {
+                script {
+                    // Set JAVA_HOME directly to the path of Java 17
+                    env.JAVA_HOME = "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+                    env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}" // Update the PATH variable
+                }
+            }
+        }
+        stage('Check Java Version') {
+            steps {
+                sh 'java -version' // Check the Java version
+            }
+        }
+
+
+
+        
         stage('SonarQube Analysis') {
     steps {
         script {
             withSonarQubeEnv('SonarQube') {
                
                     sh """
-                    java -version
+                   
                     export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
                     sonar-scanner --version
                     sonar-scanner \
