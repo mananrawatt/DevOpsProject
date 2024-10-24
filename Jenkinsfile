@@ -64,6 +64,7 @@ pipeline {
             withSonarQubeEnv('SonarQube') {
                
                     sh """
+                    java -version'
                     export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
                     sonar-scanner --version
                     sonar-scanner \
