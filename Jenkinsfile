@@ -58,19 +58,22 @@ pipeline {
         stage('SonarQube Analysis') {
     steps {
         script {
-            withSonarQubeEnv('SonarQubeScanner') {
-                // Add SonarQube Scanner path to the PATH environment variable
-                sh """
-                export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
-                sonar-scanner \
-                -Dsonar.projectKey=DevOpsPythonProject \
-                -Dsonar.host.url=http://localhost:9000 \
-                -Dsonar.login=${SONAR_TOKEN}
-                """
+            withSonarQubeEnv('SonarQube') {
+               
+                    sh """
+                    export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
+                    sonar-scanner --version
+                    sonar-scanner \
+                    -Dsonar.projectKey=DevOpsPythonProject \
+                    -Dsonar.host.url=http://localhost:9000 \
+                    -Dsonar.login=\${SONAR_TOKEN}
+                    """
+                }
             }
         }
     }
-}
+
+
         
         stage('Connect to Minikube') {
             steps {
