@@ -4,12 +4,12 @@ pipeline {
     environment {
 
         JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        // PATH = "${JAVA_HOME}/bin:${env.PATH}"
 
         
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
         // PATH = "${DOCKER_HOME}:${env.PATH}"
-         PATH = "${DOCKER_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
+         PATH = "${DOCKER_HOME}:${JAVA_HOME}:${env.PATH}"
         
 //      DOCKER_IMAGE = "mannanrawat/devops-automation:2.0"
         //DOCKER_IMAGE = "mannanrawat/devops-automation:${env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')}"
