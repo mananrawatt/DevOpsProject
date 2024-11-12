@@ -13,6 +13,8 @@ spec:
       labels:
         app: login-service
     spec:
+      imagePullSecrets: # Add this section if you are using a private registry
+        - name: myregistrykey
       containers:
       - name: login-service
         image: mannanrawat/login-service:latest  # The image you built
@@ -23,4 +25,3 @@ spec:
             value: "8501"  # Match this with the port your application runs on
         tty: true  # Allocate a pseudo-TTY
         stdin: true  # Keep the standard input open for the container
-

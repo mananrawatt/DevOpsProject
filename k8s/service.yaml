@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: devops-app-service
 spec:
+  type: NodePort
   selector:
     app: devops-app
   ports:
@@ -11,4 +12,4 @@ spec:
       port: 8080
       targetPort: 8501
       nodePort: 30002
-  type: LoadBalancer
+
