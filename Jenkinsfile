@@ -2,8 +2,14 @@ pipeline {
     agent any
 
     environment {
+
+        JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
+        // PATH = "${JAVA_HOME}/bin:${env.PATH}"
+
+        
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
-        PATH = "${DOCKER_HOME}:${env.PATH}"
+        // PATH = "${DOCKER_HOME}:${env.PATH}"
+         PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
         
 //      DOCKER_IMAGE = "mannanrawat/devops-automation:2.0"
         //DOCKER_IMAGE = "mannanrawat/devops-automation:${env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')}"
@@ -23,8 +29,9 @@ pipeline {
         //Minikube token to maintain connectivity
         MINIKUBE_TOKEN = credentials('MINI_JEN_TOKEN')
 
-        //    Deployment path where deployment files are kept
-        //DEPLOYMENT_PATH = "/Users/mananrawat/Desktop/Project/UPDATED\ CODEE/DevOpsProject/Deployment"
+        //SONAR-QUBE
+        SONAR_TOKEN = credentials('SonarQubeToken')
+        // SQ-PATH = "$PATH:/opt/homebrew/opt/sonar-scanner/bin"
     }
 
     tools {
@@ -39,8 +46,13 @@ pipeline {
             }
         }
 
-        
-        
+        stage('Check Java Version') {
+            steps {
+                sh 'java -version' // Check the Java version
+            }
+        }
+
+
         stage('Connect to Minikube') {
             steps {
                 script {
@@ -57,7 +69,7 @@ pipeline {
                 script{
                     sh '''
                         echo "------------------------------------------"
-                        
+                        kubectl version
                         echo "------------------------------------------"
                         kubectl cluster-info
                         echo "------------------------------------------"
@@ -99,101 +111,143 @@ pipeline {
                 }
             }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Build all Docker images in this stage with direct image paths
-                    echo "Building Login Service Docker Image"
-                    docker.build("mannanrawat/login-service:latest")
+        // stage('Build Docker Image') {
+        //     steps {
+        //         script {
+        //             // Build all Docker images in this stage with direct image paths
+        //             echo "Building Login Service Docker Image"
+        //             docker.build("mannanrawat/login-service:latest")
 
-                    echo "Building Jenkins Service Docker Image"
-                    docker.build("mannanrawat/jenkins-service:lts")
+        //             echo "Building Jenkins Service Docker Image"
+        //             docker.build("mannanrawat/jenkins-service:lts")
 
-                    echo "Building Kubernetes Service Docker Image"
-                    docker.build("mannanrawat/kubernetes-details:latest")
+        //             echo "Building Kubernetes Service Docker Image"
+        //             docker.build("mannanrawat/kubernetes-details:latest")
 
-                    echo "Building Minikube Controller Docker Image"
-                    docker.build("mannanrawat/minikube-controller:latest")
-                }
-            }
-        }
+        //             echo "Building Minikube Controller Docker Image"
+        //             docker.build("mannanrawat/minikube-controller:latest")
+        //         }
+        //     }
+        // }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                     // Login to Docker Hub
-                    sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
+        // stage('Push Docker Image') {
+        //     steps {
+        //         script {
+        //              // Login to Docker Hub
+        //             sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
                     
-                    // Push all Docker images in this stage
-                    echo "Pushing Login Service Docker Image"
-                    sh "docker push mannanrawat/login-service:latest"
+        //             // Push all Docker images in this stage
+        //             echo "Pushing Login Service Docker Image"
+        //             sh "docker push mannanrawat/login-service:latest"
                     
-                    echo "Pushing Jenkins Service Docker Image"
-                    sh "docker push mannanrawat/jenkins-service:lts"
+        //             echo "Pushing Jenkins Service Docker Image"
+        //             sh "docker push mannanrawat/jenkins-service:lts"
 
-                    echo "Pushing Kubernetes Service Docker Image"
-                    sh "docker push mannanrawat/kubernetes-details:latest"
+        //             echo "Pushing Kubernetes Service Docker Image"
+        //             sh "docker push mannanrawat/kubernetes-details:latest"
 
-                    echo "Pushing Minikube Controller Service Docker Image"
-                    sh "docker push mannanrawat/minikube-controller:latest"
-                }
-            }
-        }
+        //             echo "Pushing Minikube Controller Service Docker Image"
+        //             sh "docker push mannanrawat/minikube-controller:latest"
+        //         }
+        //     }
+        // }
+
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             withSonarQubeEnv('SonarQube') {
+        //                 // Set JAVA_HOME explicitly if needed
+        //                 env.JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
+                
+        //                 // Ensure the path to the sonar-scanner is included
+        //                 sh """
+        //                 export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
+        //                 echo "JAVA_HOME is set to: \$JAVA_HOME"
+        //                 echo "Current Java version:"
+        //                 java -version
+        //                 sonar-scanner --version
+        //                 sonar-scanner \
+        //                     -Dsonar.projectKey=DevOpsPythonProject \
+        //                     -Dsonar.host.url=http://localhost:9000 \
+        //                     -Dsonar.login=\${SONAR_TOKEN}
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
 
         
-
-        stage('Manual Approval for Deployment') {
-            steps {
-                input message: 'Do you want to deploy manually? Click Proceed to continue.', ok: 'Proceed'
-            }
-        }
+        // stage('Manual Approval for Deployment') {
+        //     steps {
+        //         input message: 'Do you want to deploy manually? Click Proceed to continue.', ok: 'Proceed'
+        //     }
+        // }
     
-        stage('Deployment') {
-            steps {
-                script {
-                    echo "Current Working Directory: ${env.WORKSPACE}"
-                    echo "KUBECONFIG: ${env.KUBECONFIG}"
+        // stage('Deployment') {
+        //     steps {
+        //         script {
+        //             echo "Current Working Directory: ${env.WORKSPACE}"
+        //             echo "KUBECONFIG: ${env.KUBECONFIG}"
                 
-                    // Check if the YAML file exists
-                    sh '''
-                        ls -l "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
-                    '''
+        //             // Check if the YAML file exists
+        //             sh '''
+        //                 ls -l "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
+        //             '''
             
             
-                    // Set the Kubernetes context if necessary
-                    sh 'kubectl config use-context minikube'
-                    echo "------------------STARTING DEPLOYMENT-------------------"
-                        sh """
-                            kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
-                        """
+        //             // Set the Kubernetes context if necessary
+        //             sh 'kubectl config use-context minikube'
+        //             echo "------------------STARTING DEPLOYMENT-------------------"
+        //                 sh """
+        //                     kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main
+        //                 """
 
-                    echo "------------------DEPLOYMENT SUCCESSFUL-------------------"
-                }
-            }
-        }
+        //             echo "------------------DEPLOYMENT SUCCESSFUL-------------------"
+        //         }
+        //     }
+        // }
 
 
-        stage('Run Backup Script') {
-            steps {
-                script {
-                    sh './scripts/backup.sh'
-                }
-            }
-        }
+        // stage('Run Backup Script') {
+        //     steps {
+        //         script {
+        //             sh './scripts/backup.sh'
+        //         }
+        //     }
+        // }
 
-        stage('Run Cleanup Script') {
-            steps {
-                script {
-                    sh './scripts/cleanup.sh'
-                }
-            }
-        }
+        // stage('Run Cleanup Script') {
+        //     steps {
+        //         script {
+        //             sh './scripts/cleanup.sh'
+        //         }
+        //     }
+        // }
     }
 
     post {
         always {
-            cleanWs()
+            // cleanWs()
+            script {
+                // Capture build log and send to Elasticsearch
+                def buildLog = currentBuild.rawBuild.getLog(1000).join('\n')
+                sendLogToElasticsearch(buildLog)
+            }
         }
     }
 }
-
+// Custom function to send logs to Elasticsearch
+def sendLogToElasticsearch(logData) {
+    httpRequest httpMode: 'POST',
+                contentType: 'APPLICATION_JSON',
+                requestBody: """
+                    {
+                        "timestamp": "${new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone('UTC'))}",
+                        "job": "${env.JOB_NAME}",
+                        "build_number": ${env.BUILD_NUMBER},
+                        "status": "${currentBuild.currentResult}",
+                        "message": "${logData.replaceAll('"', '\\"')}"
+                    }
+                """,
+                url: 'https://localhost:9200/jenkins-pipeline-logs/_doc'
+}
