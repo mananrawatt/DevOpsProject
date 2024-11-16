@@ -42,7 +42,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // checkout scm
+                git branch: 'development', url: 'https://github.com/mananrawatt/DevOpsProject.git', credentialsId: 'your-credentials-id'
             }
         }
 
