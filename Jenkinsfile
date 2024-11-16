@@ -44,10 +44,11 @@ pipeline {
             steps {
                 // checkout scm
                 git branch: 'development',
-                    url: 'https://github.com/mananrawatt/DevOpsProject.git', 
-                    // credentialsId: 'your-credentials-id'
-                echo "------------------------------------------"   
-                sh 'git branch' 
+                    url: 'https://github.com/mananrawatt/DevOpsProject.git'
+
+                 // Output the current branch using git
+                echo "------------------------------------------"
+                sh 'git branch'
                 echo "------------------------------------------"
             }
         }
