@@ -1,0 +1,103 @@
+- name: Start Elasticsearch and Kibana from custom directories
+  hosts: localhost
+  become: yes
+  tasks:
+
+    - name: Start Elasticsearch
+      shell: |
+        nohup ./elasticsearch > /tmp/elasticsearch_ansible.log 2>&1 &
+      args:
+        chdir: /Users/mananrawat/elk-project/elasticsearch-8.14.3/bin  # Ensure the task runs in the correct directory
+        executable: /bin/bash
+      environment:
+        JAVA_HOME: /usr/libexec/java_home -v 17  # Add this line if JAVA_HOME is required for Elasticsearch
+      async: 5
+      poll: 0
+
+    - name: Wait for Elasticsearch to initialize
+      pause:
+        seconds: 30  # Give Elasticsearch time to start
+
+    - name: Wait for Elasticsearch to start
+      uri:
+        url: http://localhost:9200
+        method: GET
+        status_code: 200
+      retries: 0  # Adjusted retries to ensure Elasticsearch has enough time to start
+      delay: 15
+      register: es_status
+      until: es_status.status == 200
+
+    - name: Start Kibana
+      shell: |
+        nohup ./kibana > /tmp/kibana_ansible.log 2>&1 &
+      args:
+        chdir: /Users/mananrawat/elk-project/kibana-8.14.3/bin  # Ensure the task runs in the correct directory
+        executable: /bin/bash
+      async: 5
+      poll: 0
+
+    - name: Wait for Kibana to start
+      uri:
+        url: http://localhost:5601
+        method: GET
+        status_code: 200
+      retries: 0  # Adjusted retries to ensure Kibana has enough time to start
+      delay: 15
+      register: kibana_status
+      until: kibana_status.status == 200
+
+
+
+
+
+
+
+
+
+
+
+
+
+#---
+#- name: Start Elasticsearch and Kibana from custom directories
+#  hosts: localhost
+#  become: yes
+#  tasks:
+#    - name: Start Elasticsearch
+#      shell: "./elasticsearch"
+#      args:
+#        chdir: "/Users/mananrawat/elk-project/elasticsearch-8.14.3/bin"  # Replace with actual Elasticsearch path
+#      environment:
+#        JAVA_HOME: "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"  # Optional: Set if needed
+#      async: 600  # Run Elasticsearch in the background
+#      poll: 0
+#
+#    - name: Wait for Elasticsearch to start
+#      uri:
+#        url: "http://localhost:9200"
+#        method: GET
+#        status_code: 200
+#        timeout: 30
+#      register: result
+#      until: result.status == 200
+#      retries: 10  # Increased retries for environments where Elasticsearch takes time
+#      delay: 15  # Increased delay for better stability
+#
+#    - name: Start Kibana
+#      shell: "./kibana"
+#      args:
+#        chdir: "/Users/mananrawat/elk-project/kibana-8.14.3/bin"  # Replace with actual Kibana path
+#      async: 600  # Run Kibana in the background
+#      poll: 0
+#
+#    - name: Wait for Kibana to start
+#      uri:
+#        url: "http://localhost:5601"
+#        method: GET
+#        status_code: 200
+#        timeout: 30
+#      register: kibana_result
+#      until: kibana_result.status == 200
+#      retries: 10  # Adjust based on how long Kibana takes
+#      delay: 15

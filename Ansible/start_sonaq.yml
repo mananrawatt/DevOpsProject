@@ -1,0 +1,41 @@
+---
+- name: Start PostgreSQL and SonarQube services using Homebrew
+  hosts: localhost
+  tasks:
+
+    - name: Start PostgreSQL service
+      shell: |
+        brew services start postgresql@15
+      register: postgresql_status
+      changed_when: "'started' in postgresql_status.stdout"
+      become: no  
+
+    - name: Wait for PostgreSQL to be ready
+      wait_for:
+        host: localhost
+        port: 5432
+        delay: 10
+        timeout: 30
+        state: started
+      when: postgresql_status.changed
+
+    - name: Start SonarQube service
+      shell: |
+        brew services start sonarqube
+      register: sonarqube_status
+      changed_when: "'started' in sonarqube_status.stdout"
+      become: no  # Avoid using become (root)
+
+    - name: Wait for SonarQube to be ready
+      uri:
+        url: http://localhost:9000
+        method: GET
+        status_code: 200
+      retries: 10
+      delay: 15
+      register: sonarqube_status_check
+      until: sonarqube_status_check.status == 200
+
+    - name: Print success message
+      debug:
+        msg: "PostgreSQL and SonarQube have started successfully using Homebrew."
