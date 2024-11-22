@@ -117,6 +117,15 @@ pipeline {
                     }
                 }
             }
+        stage('Initialize') {
+            steps {
+                script {
+                    // Dynamically create a version tag using Jenkins' build number
+                    def versionTag = "v${env.BUILD_NUMBER}"  // This ensures the tag is unique and increments with each build
+                    echo "Generated Version Tag: ${versionTag}"  // For debugging purposes
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -132,7 +141,7 @@ pipeline {
                     docker.build("mannanrawat/kubernetes-details:latest")
 
                     echo "Building Minikube Controller Docker Image"
-                    docker.build("mannanrawat/minikube-controller:${imageTag}")
+                    docker.build("mannanrawat/minikube-controller:${versionTag}")
                 }
             }
         }
@@ -154,7 +163,7 @@ pipeline {
                     sh "docker push mannanrawat/kubernetes-details:latest"
 
                     echo "Pushing Minikube Controller Service Docker Image"
-                    sh "docker push mannanrawat/minikube-controller:${imageTag}"
+                    sh "docker push mannanrawat/minikube-controller:${versionTag}"
                 }
             }
         }
