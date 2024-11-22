@@ -123,7 +123,7 @@ pipeline {
             steps {
                 script {
                     // Dynamically create a version tag using Jenkins' build number
-                    def versionTag = "v${env.BUILD_NUMBER}"  // This ensures the tag is unique and increments with each build
+                    //def versionTag = "v${env.BUILD_NUMBER}"  // This ensures the tag is unique and increments with each build
                     echo "Generated Version Tag: ${versionTag}"  // For debugging purposes
                 }
             }
