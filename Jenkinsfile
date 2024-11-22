@@ -19,6 +19,8 @@ pipeline {
 
         DOCKERHUB_USERNAME = "mananrawat788@gmail.com"
         DOCKERHUB_PASSWORD = "docker12@M"
+
+        versionTag = "v${env.BUILD_NUMBER}"  // Dynamically create a version tag using Jenkins' build number
         
         //MINIKUBE_KUBECONFIG_CREDENTIALS = credentials('minikube-kubeconfig')
         MINIKUBE_KUBECONFIG_CREDENTIALS = 'minikube-kubeconfig'
