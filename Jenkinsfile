@@ -132,7 +132,7 @@ pipeline {
                     docker.build("mannanrawat/kubernetes-details:latest")
 
                     echo "Building Minikube Controller Docker Image"
-                    docker.build("mannanrawat/minikube-controller:latest")
+                    docker.build("mannanrawat/minikube-controller:${imageTag}")
                 }
             }
         }
@@ -154,7 +154,7 @@ pipeline {
                     sh "docker push mannanrawat/kubernetes-details:latest"
 
                     echo "Pushing Minikube Controller Service Docker Image"
-                    sh "docker push mannanrawat/minikube-controller:latest"
+                    sh "docker push mannanrawat/minikube-controller:${imageTag}"
                 }
             }
         }
