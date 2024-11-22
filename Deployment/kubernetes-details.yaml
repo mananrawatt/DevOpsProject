@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: kubernetes-details
-        image: mannanrawat/kubernetes-details:latest
+        image: mannanrawat/kubernetes-details
         volumeMounts:
           - mountPath: /root/.kube/
             name: kube-config

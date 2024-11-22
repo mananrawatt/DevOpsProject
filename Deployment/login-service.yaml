@@ -17,7 +17,7 @@ spec:
         - name: myregistrykey
       containers:
       - name: login-service
-        image: mannanrawat/login-service:latest  # The image you built
+        image: mannanrawat/login-service  # The image you built
         ports:
         - containerPort: 8501  # The port your application runs on
         env:

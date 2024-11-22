@@ -134,13 +134,13 @@ pipeline {
                 script {
                     // Build all Docker images in this stage with direct image paths
                     echo "Building Login Service Docker Image"
-                    docker.build("mannanrawat/login-service:latest")
+                    docker.build("mannanrawat/login-service:${versionTag}")
 
                     echo "Building Jenkins Service Docker Image"
-                    docker.build("mannanrawat/jenkins-service:lts")
+                    docker.build("mannanrawat/jenkins-service:lts-${versionTag}")
 
                     echo "Building Kubernetes Service Docker Image"
-                    docker.build("mannanrawat/kubernetes-details:latest")
+                    docker.build("mannanrawat/kubernetes-details:${versionTag}")
 
                     echo "Building Minikube Controller Docker Image"
                     docker.build("mannanrawat/minikube-controller:${versionTag}")
@@ -156,13 +156,13 @@ pipeline {
                     
                     // Push all Docker images in this stage
                     echo "Pushing Login Service Docker Image"
-                    sh "docker push mannanrawat/login-service:latest"
+                    sh "docker push mannanrawat/login-service:${versionTag}"
                     
                     echo "Pushing Jenkins Service Docker Image"
-                    sh "docker push mannanrawat/jenkins-service:lts"
+                    sh "docker push mannanrawat/jenkins-service:lts-${versionTag}"
 
                     echo "Pushing Kubernetes Service Docker Image"
-                    sh "docker push mannanrawat/kubernetes-details:latest"
+                    sh "docker push mannanrawat/kubernetes-details:${versionTag}"
 
                     echo "Pushing Minikube Controller Service Docker Image"
                     sh "docker push mannanrawat/minikube-controller:${versionTag}"
