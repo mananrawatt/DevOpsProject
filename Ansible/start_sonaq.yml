@@ -8,7 +8,7 @@
         brew services start postgresql@15
       register: postgresql_status
       changed_when: "'started' in postgresql_status.stdout"
-      become: no  
+      become: no
 
     - name: Wait for PostgreSQL to be ready
       wait_for:
@@ -39,3 +39,6 @@
     - name: Print success message
       debug:
         msg: "PostgreSQL and SonarQube have started successfully using Homebrew."
+
+
+#ansible-playbook -i inventory.ini start_sonaq.yml -K
