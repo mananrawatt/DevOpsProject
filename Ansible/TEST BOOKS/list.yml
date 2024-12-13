@@ -1,0 +1,28 @@
+---
+- name: Change directory and display the path
+  hosts: localhost
+  tasks:
+    - name: Change directory to the specified path
+      command: cd /Users/mananrawat/elk-project/elasticsearch-8.14.3/bin
+
+    - name: Display the current path
+      command: pwd
+      register: pwd_output
+
+    - name: Display the list of files in the directory
+      command: ls
+      args:
+        chdir: /Users/mananrawat/elk-project/elasticsearch-8.14.3/bin
+      register: ls_output
+
+    - name: Show the output of pwd
+      debug:
+        msg: "The current directory is: {{ pwd_output.stdout }}"
+
+    - name: Show the list of files, each on a new line
+      debug:
+          msg: |
+            The files in the directory are:
+            {% for file in ls_output.stdout.split('\n') %}
+              - {{ file }}
+            {% endfor %}

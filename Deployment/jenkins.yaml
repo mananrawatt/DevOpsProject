@@ -15,8 +15,8 @@ spec:
 
     spec:
       containers:
-      - name: jenkins       # The name of the container in the pod
-        image: mannanrawat/jenkins-service:lts # The container image to use (Jenkins LTS version in this case)
+      - name: jenkins
+        image: mannanrawat/jenkins-service:lts
 
         # Commented out lines for alternative images:
         # image: mannanrawat/devops-automation:latest  (Custom image reference, currently commented out)
