@@ -6,11 +6,11 @@ pipeline {
         JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
         // PATH = "${JAVA_HOME}/bin:${env.PATH}"
 
-        
+
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
         // PATH = "${DOCKER_HOME}:${env.PATH}"
          PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
-        
+
 //      DOCKER_IMAGE = "mannanrawat/devops-automation:2.0"
         //DOCKER_IMAGE = "mannanrawat/devops-automation:${env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')}"
         // Sanitize BUILD_ID to remove any characters that are not allowed in Docker image names
@@ -19,7 +19,9 @@ pipeline {
 
         DOCKERHUB_USERNAME = "mananrawat788@gmail.com"
         DOCKERHUB_PASSWORD = "docker12@M"
-        
+
+        versionTag = "v${env.BUILD_NUMBER}"  // Dynamically create a version tag using Jenkins' build number
+
         //MINIKUBE_KUBECONFIG_CREDENTIALS = credentials('minikube-kubeconfig')
         MINIKUBE_KUBECONFIG_CREDENTIALS = 'minikube-kubeconfig'
 
@@ -42,7 +44,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // checkout scm
+                git branch: 'development',
+                    url: 'https://github.com/mananrawatt/DevOpsProject.git'
+
+                 // Output the current branch using git
+                echo "------------------------------------------"
+                sh 'git branch'
+                echo "------------------------------------------"
             }
         }
 
@@ -97,8 +106,8 @@ pipeline {
                 }
             }
         }
-        
-    
+
+
 
         stage('Setup') {
                 steps {
@@ -110,22 +119,31 @@ pipeline {
                     }
                 }
             }
+        stage('Initialize') {
+            steps {
+                script {
+                    // Dynamically create a version tag using Jenkins' build number
+                    //def versionTag = "v${env.BUILD_NUMBER}"  // This ensures the tag is unique and increments with each build
+                    echo "Generated Version Tag: ${versionTag}"  // For debugging purposes
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
                 script {
                     // Build all Docker images in this stage with direct image paths
                     echo "Building Login Service Docker Image"
-                    docker.build("mannanrawat/login-service:latest")
+                    docker.build("mannanrawat/login-service:${versionTag}")
 
                     echo "Building Jenkins Service Docker Image"
-                    docker.build("mannanrawat/jenkins-service:lts")
+                    docker.build("mannanrawat/jenkins-service:lts-${versionTag}")
 
                     echo "Building Kubernetes Service Docker Image"
-                    docker.build("mannanrawat/kubernetes-details:latest")
+                    docker.build("mannanrawat/kubernetes-details:${versionTag}")
 
                     echo "Building Minikube Controller Docker Image"
-                    docker.build("mannanrawat/minikube-controller:latest")
+                    docker.build("mannanrawat/minikube-controller:${versionTag}")
                 }
             }
         }
@@ -135,66 +153,66 @@ pipeline {
                 script {
                      // Login to Docker Hub
                     sh "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
-                    
+
                     // Push all Docker images in this stage
                     echo "Pushing Login Service Docker Image"
-                    sh "docker push mannanrawat/login-service:latest"
-                    
+                    sh "docker push mannanrawat/login-service:${versionTag}"
+
                     echo "Pushing Jenkins Service Docker Image"
-                    sh "docker push mannanrawat/jenkins-service:lts"
+                    sh "docker push mannanrawat/jenkins-service:lts-${versionTag}"
 
                     echo "Pushing Kubernetes Service Docker Image"
-                    sh "docker push mannanrawat/kubernetes-details:latest"
+                    sh "docker push mannanrawat/kubernetes-details:${versionTag}"
 
                     echo "Pushing Minikube Controller Service Docker Image"
-                    sh "docker push mannanrawat/minikube-controller:latest"
+                    sh "docker push mannanrawat/minikube-controller:${versionTag}"
                 }
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube') {
-                        // Set JAVA_HOME explicitly if needed
-                        env.JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
-                
-                        // Ensure the path to the sonar-scanner is included
-                        sh """
-                        export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
-                        echo "JAVA_HOME is set to: \$JAVA_HOME"
-                        echo "Current Java version:"
-                        java -version
-                        sonar-scanner --version
-                        sonar-scanner \
-                            -Dsonar.projectKey=DevOpsPythonProject \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.login=\${SONAR_TOKEN}
-                        """
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             withSonarQubeEnv('SonarQube') {
+        //                 // Set JAVA_HOME explicitly if needed
+        //                 env.JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
 
-        
+        //                 // Ensure the path to the sonar-scanner is included
+        //                 sh """
+        //                 export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
+        //                 echo "JAVA_HOME is set to: \$JAVA_HOME"
+        //                 echo "Current Java version:"
+        //                 java -version
+        //                 sonar-scanner --version
+        //                 sonar-scanner \
+        //                     -Dsonar.projectKey=DevOpsPythonProject \
+        //                     -Dsonar.host.url=http://localhost:9000 \
+        //                     -Dsonar.login=\${SONAR_TOKEN}
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
+
+
         stage('Manual Approval for Deployment') {
             steps {
                 input message: 'Do you want to deploy manually? Click Proceed to continue.', ok: 'Proceed'
             }
         }
-    
+
         stage('Deployment') {
             steps {
                 script {
                     echo "Current Working Directory: ${env.WORKSPACE}"
                     echo "KUBECONFIG: ${env.KUBECONFIG}"
-                
+
                     // Check if the YAML file exists
                     sh '''
                         ls -l "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
                     '''
-            
-            
+
+
                     // Set the Kubernetes context if necessary
                     sh 'kubectl config use-context minikube'
                     echo "------------------STARTING DEPLOYMENT-------------------"
@@ -228,7 +246,11 @@ pipeline {
     post {
         always {
             cleanWs()
-            
+            // script {
+            //     // Capture build log and send to Elasticsearch
+            //     def buildLog = currentBuild.rawBuild.getLog(1000).join('\n')
+            //     sendLogToElasticsearch(buildLog)
+            // }
         }
     }
 }
