@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: minikube-controller
-        image: mannanrawat/minikube-controller:latest
+        image: mannanrawat/minikube-controller
         ports:
         - containerPort: 8501
         resources:

@@ -1,0 +1,13 @@
+---
+- name: Change directory and display the path
+  hosts: localhost
+  tasks:
+    - name: Change directory and run pwd
+      command: pwd
+      args:
+        chdir: /Users/mananrawat/elk-project/elasticsearch-8.14.3/bin
+      register: result
+
+    - name: Display the result of pwd
+      debug:
+        msg: "{{ result.stdout }}"
