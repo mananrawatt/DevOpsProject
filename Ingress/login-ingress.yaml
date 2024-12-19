@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: login-ingress
+  namespace: main
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx  # Updated to use spec.ingressClassName
+  rules:
+    - host: login.example.com  # Update this based on your domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: login-service
+                port:
+                  number: 8501
