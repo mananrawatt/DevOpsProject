@@ -111,13 +111,19 @@ pipeline {
 
         stage('Setup') {
                 steps {
-                    sh "chmod +x ${MINIKUBE_BIN}"
-                    sh "${MINIKUBE_BIN} start --driver=docker"
-                    sh "${MINIKUBE_BIN} kubectl config use-context minikube"
-                    script {
-                        env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}" // Assuming kubeconfig is in the workspace
-                    }
-                }
+                //     sh "chmod +x ${MINIKUBE_BIN}"
+                //     sh "${MINIKUBE_BIN} start --driver=docker"
+                //     sh "${MINIKUBE_BIN} kubectl config use-context minikube"
+                //     script {
+                //         env.KUBECONFIG = "${env.WORKSPACE}/${KUBECONFIG_FILE}" // Assuming kubeconfig is in the workspace
+                //     }
+                // }
+                     withCredentials([file(credentialsId: 'minikube-kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+                        sh "chmod +x ${MINIKUBE_BIN}"
+                        sh "${MINIKUBE_BIN} start --driver=docker"
+                        sh "export KUBECONFIG=${KUBECONFIG_FILE}"
+                        sh "${MINIKUBE_BIN} kubectl config use-context minikube"
+                    
             }
         stage('Initialize') {
             steps {
