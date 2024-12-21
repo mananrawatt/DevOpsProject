@@ -217,14 +217,18 @@ pipeline {
                     sh '''
                         ls -l "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment/jenkins.yaml"
                     '''
-            
+
+                      // Check if namespace exists or create it
+                    sh '''
+                        kubectl get ns main  
+                    '''
             
                     // Set the Kubernetes context if necessary
                     sh 'kubectl config use-context minikube'
                     echo "------------------STARTING DEPLOYMENT-------------------"
-                        sh """
+                        sh '''
                             kubectl apply -f "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Deployment"/jenkins.yaml --namespace=main   --validate=false
-                        """
+                        '''
 
                     echo "------------------DEPLOYMENT SUCCESSFUL-------------------"
                 }
