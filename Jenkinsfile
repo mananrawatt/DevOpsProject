@@ -123,6 +123,8 @@ pipeline {
                         sh "${MINIKUBE_BIN} start --driver=docker"
                         sh "export KUBECONFIG=${KUBECONFIG_FILE}"
                         sh "${MINIKUBE_BIN} kubectl config use-context minikube"
+                     }
+                
                     
             }
         stage('Initialize') {
