@@ -125,7 +125,7 @@ pipeline {
                         sh "${MINIKUBE_BIN} kubectl config use-context minikube"
                      }
                 
-                    
+                }
             }
         stage('Initialize') {
             steps {
