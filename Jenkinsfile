@@ -10,9 +10,12 @@ pipeline {
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
         // PATH = "${DOCKER_HOME}:${env.PATH}"
          PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
+
+         ANSIBLE_HOME = '/opt/homebrew/bin'
         
 //      DOCKER_IMAGE = "mannanrawat/devops-automation:2.0"
         //DOCKER_IMAGE = "mannanrawat/devops-automation:${env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')}"
+        
         // Sanitize BUILD_ID to remove any characters that are not allowed in Docker image names
         SANITIZED_BUILD_ID = env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')
         DOCKER_IMAGE = "mannanrawat/devops-automation:${SANITIZED_BUILD_ID}"
