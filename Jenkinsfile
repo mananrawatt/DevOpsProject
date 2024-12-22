@@ -58,6 +58,22 @@ pipeline {
             }
         }
 
+
+
+        stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    sh '''
+                        cd /Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible
+                        ansible-playbook -i inventory.ini start_sonaq.yml
+                    '''
+                    }
+                }
+            }
+        }
+
+
+        
         stage('Check Java Version') {
             steps {
                 sh 'java -version' // Check the Java version
@@ -145,20 +161,20 @@ pipeline {
         }
 
 
-        stage('Run Ansible Playbook') {
-            steps {
-                script {
-                    dir('/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible') {
-                    // Run the Ansible playbook
-                    sh 'ansible-playbook -i inventory.ini start_sonaq.yml'
-                    // // Execute the Ansible playbook
-                    // sh '''
-                    //     ansible-playbook -i inventory.ini start_sonaq.yml
-                    // '''
-                    }
-                }
-            }
-        }
+        // stage('Run Ansible Playbook') {
+        //     steps {
+        //         script {
+        //             dir('/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible') {
+        //             // Run the Ansible playbook
+        //             sh 'ansible-playbook -i inventory.ini start_sonaq.yml'
+        //             // // Execute the Ansible playbook
+        //             // sh '''
+        //             //     ansible-playbook -i inventory.ini start_sonaq.yml
+        //             // '''
+        //             }
+        //         }
+        //     }
+        // }
         
         stage('Build Docker Image') {
             steps {
