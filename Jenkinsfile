@@ -65,7 +65,7 @@ pipeline {
         }
         stage('Check Ansible Version') {
             steps {
-                sh 'ansible --version' // Check the Ansible version
+                sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
             }
         }
 
