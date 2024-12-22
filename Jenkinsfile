@@ -155,6 +155,7 @@ pipeline {
                     // sh '''
                     //     ansible-playbook -i inventory.ini start_sonaq.yml
                     // '''
+                    }
                 }
             }
         }
