@@ -150,7 +150,7 @@ pipeline {
                 script {
                     dir('/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible') {
                     // Run the Ansible playbook
-                    sh 'ansible-playbook -i inventory.ini start_sonaq.yml
+                    sh 'ansible-playbook -i inventory.ini start_sonaq.yml'
                     // // Execute the Ansible playbook
                     // sh '''
                     //     ansible-playbook -i inventory.ini start_sonaq.yml
