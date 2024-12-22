@@ -81,7 +81,9 @@ pipeline {
         }
         stage('Check Ansible Version') {
             steps {
+                withEnv(['ANSIBLE_CONFIG=/Users/mananrawat/.ansible.cfg']) {
                 sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
+                }
             }
         }
 
