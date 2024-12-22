@@ -11,7 +11,7 @@ pipeline {
         // PATH = "${DOCKER_HOME}:${env.PATH}"
          PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
 
-         ANSIBLE_HOME = '/opt/homebrew/bin'
+         ANSIBLE_HOME = '/opt/homebrew/bin/ansible'
         
 //      DOCKER_IMAGE = "mannanrawat/devops-automation:2.0"
         //DOCKER_IMAGE = "mannanrawat/devops-automation:${env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')}"
@@ -65,7 +65,7 @@ pipeline {
                 script {
                     sh '''
                         cd "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible"
-                        ansible-playbook -i inventory.ini start_sonaq.yml
+                        ${ANSIBLE_HOME} -i inventory.ini start_sonaq.yml
                     '''
                     }
                 }
@@ -81,7 +81,7 @@ pipeline {
         }
         stage('Check Ansible Version') {
             steps {
-                sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
+                sh '${ANSIBLE_HOME} --version' // Check the Ansible version
             }
         }
 
