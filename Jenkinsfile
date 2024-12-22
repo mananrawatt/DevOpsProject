@@ -60,16 +60,16 @@ pipeline {
 
 
 
-        stage('Run Ansible Playbook') {
-            steps {
-                script {
-                    sh '''
-                        cd "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible"
-                        ${ANSIBLE_HOME} -i inventory.ini start_sonaq.yml
-                    '''
-                    }
-                }
-            }
+        // stage('Run Ansible Playbook') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 cd "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible"
+        //                 ${ANSIBLE_HOME} -i inventory.ini start_sonaq.yml
+        //             '''
+        //             }
+        //         }
+        //     }
         
 
 
