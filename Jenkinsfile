@@ -64,7 +64,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        cd /Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible
+                        cd "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible"
                         ansible-playbook -i inventory.ini start_sonaq.yml
                     '''
                     }
