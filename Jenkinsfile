@@ -60,7 +60,11 @@ pipeline {
                 sh 'java -version' // Check the Java version
             }
         }
-
+        stage('Check Ansible Version') {
+            steps {
+                sh 'ansible --version' // Check the Ansible version
+            }
+        }
 
         stage('Connect to Minikube') {
             steps {
@@ -137,6 +141,18 @@ pipeline {
             }
         }
 
+
+        stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    // Execute the Ansible playbook
+                    sh '''
+                        ansible-playbook -i inventory.ini start_sonaq.yml
+                    '''
+                }
+            }
+        }
+        
         stage('Build Docker Image') {
             steps {
                 script {
@@ -178,29 +194,29 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         script {
-        //             withSonarQubeEnv('SonarQube') {
-        //                 // Set JAVA_HOME explicitly if needed
-        //                 env.JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube') {
+                        // Set JAVA_HOME explicitly if needed
+                        env.JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
                 
-        //                 // Ensure the path to the sonar-scanner is included
-        //                 sh """
-        //                 export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
-        //                 echo "JAVA_HOME is set to: \$JAVA_HOME"
-        //                 echo "Current Java version:"
-        //                 java -version
-        //                 sonar-scanner --version
-        //                 sonar-scanner \
-        //                     -Dsonar.projectKey=DevOpsPythonProject \
-        //                     -Dsonar.host.url=http://localhost:9000 \
-        //                     -Dsonar.login=\${SONAR_TOKEN}
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
+                        // Ensure the path to the sonar-scanner is included
+                        sh """
+                        export PATH=/opt/homebrew/opt/sonar-scanner/bin:\$PATH
+                        echo "JAVA_HOME is set to: \$JAVA_HOME"
+                        echo "Current Java version:"
+                        java -version
+                        sonar-scanner --version
+                        sonar-scanner \
+                            -Dsonar.projectKey=DevOpsPythonProject \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=\${SONAR_TOKEN}
+                        """
+                    }
+                }
+            }
+        }
 
         
         stage('Manual Approval for Deployment') {
