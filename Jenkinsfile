@@ -6,13 +6,15 @@ pipeline {
         JAVA_HOME = '/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
         // PATH = "${JAVA_HOME}/bin:${env.PATH}"
 
-        
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
-        // PATH = "${DOCKER_HOME}:${env.PATH}"
-        PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
-        // PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}::/opt/homebrew/bin:${env.PATH}" -> by this all the paths at once were given
 
         ANSIBLE_HOME = '/opt/homebrew/bin:${env.PATH}'
+        
+        // PATH = "${DOCKER_HOME}:${env.PATH}"
+        PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${ANSIBLE_HOME}:${env.PATH}"
+        // PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}::/opt/homebrew/bin:${env.PATH}" -> by this all the paths at once were given
+
+        
         
 //      DOCKER_IMAGE = "mannanrawat/devops-automation:2.0"
         //DOCKER_IMAGE = "mannanrawat/devops-automation:${env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')}"
@@ -84,15 +86,15 @@ pipeline {
             steps {
                 // withEnv(['ANSIBLE_CONFIG=/Users/mananrawat/.ansible.cfg']) {
                 // sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
-                // sh 'which ansible'
-                // sh 'ansible --version'
+                sh 'which ansible'
+                sh 'ansible --version'
                
-                    // Use ANSIBLE_HOME for the specific step requiring Ansible, means for this particular stage we have configured this
-                    withEnv(["PATH=${ANSIBLE_HOME}"]) {
-                        // Run your commands that require ansible
-                        sh 'which ansible'  // This should now correctly find ansible
+                    // // Use ANSIBLE_HOME for the specific step requiring Ansible, means for this particular stage we have configured this
+                    // withEnv(["PATH=${ANSIBLE_HOME}"]) {
+                    //     // Run your commands that require ansible
+                    //     sh 'which ansible'  // This should now correctly find ansible
                     
-                }
+                
             }
         }
 
