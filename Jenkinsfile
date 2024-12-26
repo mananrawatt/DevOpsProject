@@ -86,7 +86,7 @@ pipeline {
 
                 sh 'which ansible'
                 sh 'ansible --version'
-                }
+                
             }
         }
 
