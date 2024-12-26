@@ -11,7 +11,7 @@ pipeline {
         // PATH = "${DOCKER_HOME}:${env.PATH}"
          PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${env.PATH}"
 
-         ANSIBLE_HOME = '/opt/homebrew/bin/ansible-playbook'
+         // ANSIBLE_HOME = '/opt/homebrew/bin/ansible-playbook'
         
 //      DOCKER_IMAGE = "mannanrawat/devops-automation:2.0"
         //DOCKER_IMAGE = "mannanrawat/devops-automation:${env.BUILD_ID.replaceAll('[^a-zA-Z0-9]', '_')}"
@@ -81,8 +81,11 @@ pipeline {
         }
         stage('Check Ansible Version') {
             steps {
-                withEnv(['ANSIBLE_CONFIG=/Users/mananrawat/.ansible.cfg']) {
-                sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
+                // withEnv(['ANSIBLE_CONFIG=/Users/mananrawat/.ansible.cfg']) {
+                // sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
+
+                sh 'which ansible'
+                sh 'ansible --version'
                 }
             }
         }
