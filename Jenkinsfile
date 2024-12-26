@@ -86,16 +86,31 @@ pipeline {
                 // sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
                 // sh 'which ansible'
                 // sh 'ansible --version'
-                script {
+               
                     // Use ANSIBLE_HOME for the specific step requiring Ansible, means for this particular stage we have configured this
                     withEnv(["PATH=${ANSIBLE_HOME}"]) {
                         // Run your commands that require ansible
                         sh 'which ansible'  // This should now correctly find ansible
-                    }
+                    
                 }
             }
         }
 
+        stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    sh '''
+                        cd "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible"
+                        ${ANSIBLE_HOME} -i inventory.ini start_sonaq.yml
+                    '''
+                    }
+                }
+            }
+
+        
+
+
+        
         stage('Connect to Minikube') {
             steps {
                 script {
