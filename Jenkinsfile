@@ -8,7 +8,7 @@ pipeline {
 
         DOCKER_HOME = '/Applications/Docker.app/Contents/Resources/bin'
 
-        ANSIBLE_HOME = '/opt/homebrew/bin:${env.PATH}'
+        ANSIBLE_HOME = '/opt/homebrew/bin'
         
         // PATH = "${DOCKER_HOME}:${env.PATH}"
         PATH = "${DOCKER_HOME}:${JAVA_HOME}:${SONAR_SCANNER_HOME}:${ANSIBLE_HOME}:${env.PATH}"
