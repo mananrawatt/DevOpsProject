@@ -41,4 +41,5 @@
         msg: "PostgreSQL and SonarQube have started successfully using Homebrew."
 
 
-#ansible-playbook -i inventory.ini start_sonaq.yml -K
+#ansible-playbook -i inventory.ini start_sonaq.yml  -> without password
+#ansible-playbook -i inventory.ini start_sonaq.yml -K -> with password
