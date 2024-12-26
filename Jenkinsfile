@@ -62,21 +62,6 @@ pipeline {
         }
 
 
-
-        // stage('Run Ansible Playbook') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //                 cd "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible"
-        //                 ${ANSIBLE_HOME} -i inventory.ini start_sonaq.yml
-        //             '''
-        //             }
-        //         }
-        //     }
-        
-
-
-        
         stage('Check Java Version') {
             steps {
                 sh 'java -version' // Check the Java version
@@ -84,41 +69,23 @@ pipeline {
         }
         stage('Check Ansible Version') {
             steps {
-                // withEnv(['ANSIBLE_CONFIG=/Users/mananrawat/.ansible.cfg']) {
-                // sh '/opt/homebrew/bin/ansible --version' // Check the Ansible version
                 sh 'which ansible'
                 sh 'ansible --version'
-               
-                    // // Use ANSIBLE_HOME for the specific step requiring Ansible, means for this particular stage we have configured this
-                    // withEnv(["PATH=${ANSIBLE_HOME}"]) {
-                    //     // Run your commands that require ansible
-                    //     sh 'which ansible'  // This should now correctly find ansible
-                    
-                
             }
         }
 
-        // stage('Run Ansible Playbook') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //                 cd "/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible"
-        //                 ${ANSIBLE_HOME} -i inventory.ini start_sonaq.yml
-        //             '''
-        //             }
-        //         }
-        //     }
-
-          stage('Run Ansible Playbook') {
+        
+        stage('Run Ansible Playbook') {
             steps {
                 script {
+                    //Navigate to the particular directory where ansible directory is there
                     dir('/Users/mananrawat/Desktop/Project/UPDATED CODEE/DevOpsProject/Ansible') {
                     // Run the Ansible playbook
-                    sh 'ansible-playbook -i inventory.ini start_sonaq.yml'
-                    // // Execute the Ansible playbook
-                    // sh '''
-                    //     ansible-playbook -i inventory.ini start_sonaq.yml
-                    // '''
+                    sh '''
+                        ansible-playbook -i inventory.ini start_sonaq.yml
+                        ansible-playbook -i inventory.ini start_elastic.yml
+                        ansible-playbook -i inventory.ini start_kibana.yml                        
+                        '''
                     }
                 }
             }
